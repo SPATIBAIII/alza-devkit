@@ -32,17 +32,21 @@ def spreadsheet_safe(value: str | int) -> str | int:
 
 
 def export_households(dataset: HouseholdDataset, format: ExportFormat) -> bytes:
+    return export_records(dataset.model_dump(), list(FIELDS), format, "Synthetic households")
+
+
+def export_records(dataset: dict, fields: list[str], format: ExportFormat, title: str = "Synthetic dataset") -> bytes:
     if format == "json":
-        return json.dumps(dataset.model_dump(), ensure_ascii=False, indent=2).encode("utf-8")
+        return json.dumps(dataset, ensure_ascii=False, indent=2).encode("utf-8")
 
     rows = [
-        [spreadsheet_safe(record.model_dump()[field]) for field in FIELDS]
-        for record in dataset.data
+        [spreadsheet_safe(record[field]) for field in fields]
+        for record in dataset["data"]
     ]
     if format == "csv":
         output = StringIO(newline="")
         writer = csv.writer(output)
-        writer.writerow(FIELDS)
+        writer.writerow([spreadsheet_safe(field) for field in fields])
         writer.writerows(rows)
         return output.getvalue().encode("utf-8-sig")
     if format != "xlsx":
@@ -50,8 +54,8 @@ def export_households(dataset: HouseholdDataset, format: ExportFormat) -> bytes:
 
     workbook = Workbook()
     sheet = workbook.active
-    sheet.title = "Synthetic households"
-    sheet.append(FIELDS)
+    sheet.title = title
+    sheet.append([spreadsheet_safe(field) for field in fields])
     for row in rows:
         # XML cannot represent certain control characters; normalize line endings
         # explicitly so the saved workbook has a predictable round trip.

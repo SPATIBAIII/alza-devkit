@@ -5,8 +5,11 @@ import { generateHouseholds } from "@/lib/data-factory-api";
 import type { GenerationConfig, HouseholdDataset } from "@/types/data-factory";
 import { GenerationForm } from "./generation-form";
 import { DatasetPreview } from "./dataset-preview";
+import { CustomDatasetBuilder } from "./custom-dataset-builder";
+import { Button } from "@/components/ui/button";
 
 export function DataFactory() {
+  const [mode, setMode] = useState("households");
   const [dataset, setDataset] = useState<HouseholdDataset | null>(null);
   const [generation, setGeneration] = useState(0);
   const [busy, setBusy] = useState(false);
@@ -35,9 +38,16 @@ export function DataFactory() {
         <p>Generate realistic synthetic datasets for development, testing, and analytics.</p>
         <p className="mt-2 text-xs">All records are synthetic, with fictional sample barangays. Income categories are illustrative testing values, not official classifications.</p>
       </div>
+      <div className="flex flex-wrap gap-2" aria-label="Dataset mode">
+        <Button variant={mode === "households" ? "default" : "outline"} aria-pressed={mode === "households"} onClick={() => setMode("households")}>Household Dataset</Button>
+        <Button variant={mode === "custom" ? "default" : "outline"} aria-pressed={mode === "custom"} onClick={() => setMode("custom")}>Custom Dataset</Button>
+      </div>
+      <div hidden={mode !== "households"} className="space-y-6">
       <GenerationForm busy={busy} onGenerate={generate} />
       {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}{dataset && " The previous dataset is still shown below."}</div>}
       <DatasetPreview key={generation} dataset={dataset} busy={busy} />
+      </div>
+      {mode === "custom" && <CustomDatasetBuilder />}
     </div>
   );
 }

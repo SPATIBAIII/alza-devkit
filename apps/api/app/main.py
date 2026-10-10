@@ -2,6 +2,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.v1.data_factory import router as data_factory_router
+from app.api.v1.custom_data_factory import router as custom_data_factory_router
+from app.modules.data_factory.request_limits import CustomBodyLimit
 
 app = FastAPI(
     title="ALZA DevKit API",
@@ -9,14 +11,16 @@ app = FastAPI(
     version="0.1.0",
 )
 
+app.add_middleware(CustomBodyLimit)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:3000", "http://127.0.0.1:3000"],
-    allow_methods=["GET", "POST"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],
     allow_headers=["Content-Type"],
 )
 
 app.include_router(data_factory_router)
+app.include_router(custom_data_factory_router)
 
 @app.get("/api/v1/health")
 def health_check():
