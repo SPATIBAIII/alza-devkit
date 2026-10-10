@@ -1,15 +1,16 @@
 <div align="center">
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=0:09090b,50:18181b,100:27272a&height=190&section=header&text=ALZA%20DEVKIT&fontSize=49&fontColor=ffffff&fontAlignY=38&desc=Build%20%2F%20Test%20%2F%20Ship&descAlignY=61&descSize=16" width="100%" alt="ALZA DevKit banner" />
+<img src="https://capsule-render.vercel.app/api?type=waving&color=0:09090b,50:18181b,100:27272a&height=190&section=header&text=ALZA%20DEVKIT&fontSize=49&fontColor=ffffff&fontAlignY=38&desc=Build%20%2F%20Test%20%2F%20Ship&descAlignY=61&descSize=16" width="100%" alt="ALZA DevKit" />
 
-### A private developer operations workspace.
+### Developer tools. One workspace.
 
-**Generate test data. Validate workflows. Build with confidence.**
+**Synthetic data · Reusable templates · Reliable testing**
 
+[![Version](https://img.shields.io/badge/Version-v0.2.0-27272a?style=flat-square)](#features)
 [![Next.js](https://img.shields.io/badge/Next.js-16-111111?style=flat-square&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5-111111?style=flat-square&logo=typescript&logoColor=3178C6)](https://www.typescriptlang.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-Python-111111?style=flat-square&logo=fastapi&logoColor=009688)](https://fastapi.tiangolo.com/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-111111?style=flat-square&logo=tailwindcss&logoColor=06B6D4)](https://tailwindcss.com/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-111111?style=flat-square&logo=typescript&logoColor=3178C6)](https://www.typescriptlang.org/)
+[![FastAPI](https://img.shields.io/badge/FastAPI-111111?style=flat-square&logo=fastapi&logoColor=009688)](https://fastapi.tiangolo.com/)
+[![Python](https://img.shields.io/badge/Python-3.12%2B-111111?style=flat-square&logo=python&logoColor=3776AB)](https://python.org/)
 
 [Overview](#overview) · [Features](#features) · [Architecture](#architecture) · [Quick Start](#quick-start) · [Roadmap](#roadmap)
 
@@ -19,57 +20,20 @@
 
 ## Overview
 
-**ALZA DevKit** is an internal developer toolkit for building, testing, and maintaining software projects from a single workspace. It brings repeatable development utilities into a clean web interface backed by a modular Python API.
-
-> **Current release:** Mock Data Factory MVP. Other modules shown in the roadmap are planned, not shipped.
+**ALZA DevKit** is a private developer operations workspace for generating synthetic test data and building reusable engineering utilities. Version **0.2.0** introduces the **Custom Dataset Builder** alongside the existing household generator.
 
 ## Features
 
-<table>
-<tr><td width="50%" valign="top">
-
-### 01 / Mock Data Factory
-**Available**
-
-- Synthetic household records with Filipino-style Faker names
-- Configurable row count (1–1,000)
-- Reproducible results with a random seed
-- Paginated dataset preview
-- CSV, JSON, and Excel exports
-- Input validation and spreadsheet-formula protection
-
-</td><td width="50%" valign="top">
-
-### 02 / Custom Dataset Builder
-**Planned**
-
-- Custom fields and generation rules
-- Reusable schema templates
-- Multiple dataset presets
-- Typed constraints and computed fields
-
-</td></tr>
-<tr><td width="50%" valign="top">
-
-### 03 / API Testing Lab
-**Planned**
-
-- Endpoint requests and response inspection
-- Reusable API test collections
-- Environment-aware testing
-
-</td><td width="50%" valign="top">
-
-### 04 / Developer Operations
-**Planned**
-
-- Database inspection
-- Code quality auditing
-- Deployment health monitoring
-- Engineering reports
-
-</td></tr>
-</table>
+| Module | Status | Capabilities |
+| :-- | :-- | :-- |
+| **Household Generator** | Available | Seeded synthetic records, paginated preview, 1–1,000 rows |
+| **Custom Dataset Builder** | Available | Configurable fields, typed constraints, three computed operations |
+| **Template Library** | Available | Create, edit, duplicate, delete, import/export, SQLite persistence |
+| **Export Engine** | Available | CSV, JSON, Excel; spreadsheet formula protection |
+| Database Schema Importer | Planned | Import database structure |
+| API Testing Lab | Planned | Endpoint and response testing |
+| Code Auditor | Planned | Code quality analysis |
+| Deployment Monitor | Planned | Application health monitoring |
 
 ## Architecture
 
@@ -77,106 +41,100 @@
 flowchart LR
     U["Developer"] --> W["Next.js Dashboard"]
     W --> A["FastAPI /api/v1"]
-    A --> G["Synthetic Data Engine"]
-    G --> F["Faker + Seeded RNG"]
-    A --> E["Export Services"]
-    E --> O["CSV / JSON / XLSX"]
-    classDef surface fill:#18181b,stroke:#52525b,color:#fafafa
-    class U,W,A,G,F,E,O surface
+    A --> H["Household Generator"]
+    A --> C["Custom Dataset Engine"]
+    C --> R["Field Registry + Constraints"]
+    A --> T["SQLite Template Store"]
+    H --> E["Shared Export Service"]
+    C --> E
+    E --> F["CSV / JSON / XLSX"]
+    classDef dark fill:#18181b,stroke:#71717a,color:#fafafa
+    class U,W,A,H,C,R,T,E,F dark
 ```
 
 ```text
 alza-devkit/
 ├── apps/
 │   ├── web/          # Next.js, TypeScript, Tailwind, shadcn/ui
-│   └── api/          # FastAPI, Faker, OpenPyXL, Pytest
-├── docs/             # Engineering and setup guides
-├── scripts/          # Verification utilities
+│   └── api/          # FastAPI, Faker, SQLite, OpenPyXL, Pytest
+├── docs/             # Implementation guides
+├── scripts/          # Browser verification scripts
 ├── infra/            # Infrastructure workspace
 └── storage/          # Local workspace data
 ```
 
 ## Quick Start
 
-**Requirements:** Node.js and npm, Python 3.12+, and [uv](https://docs.astral.sh/uv/).
+**Requirements:** Node.js, npm, Python 3.12+, and [uv](https://docs.astral.sh/uv/).
 
 ```powershell
 git clone https://github.com/SPATIBAIII/alza-devkit.git
 cd alza-devkit
 ```
 
-**Terminal 1 — API**
+**Terminal 1 — Backend**
 
 ```powershell
 cd apps/api
 uv sync
-uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+uv run uvicorn app.main:app --host 127.0.0.1 --port 8000
 ```
 
-**Terminal 2 — Web**
+**Terminal 2 — Frontend**
 
 ```powershell
 cd apps/web
 npm ci
-npm run dev
+npm run dev -- --hostname 127.0.0.1
 ```
 
-| Service | Local address |
+| Service | Address |
 | :-- | :-- |
 | Dashboard | http://localhost:3000 |
-| API | http://127.0.0.1:8000 |
-| Swagger UI | http://127.0.0.1:8000/docs |
+| API docs | http://127.0.0.1:8000/docs |
 | Health check | http://127.0.0.1:8000/api/v1/health |
 
-If needed, copy `apps/web/.env.example` to `apps/web/.env.local` and configure `NEXT_PUBLIC_API_BASE_URL`. Restart the web server after changing it.
+Copy `apps/web/.env.example` to `apps/web/.env.local` if you need to configure `NEXT_PUBLIC_API_BASE_URL`.
 
-## Using Mock Data Factory
+## Generate a Dataset
 
-1. Open **Mock Data Factory** in the dashboard sidebar.
-2. Select **Household Dataset**.
-3. Enter the number of records and an optional seed.
-4. Click **Generate Dataset**.
-5. Preview records and download **CSV**, **JSON**, or **Excel**.
+Open **Mock Data Factory** and select either **Household Dataset** or **Custom Dataset**. The custom builder lets you configure fields, validate constraints, generate records, preview results, and export files. Save custom templates to reuse them after restarting the application.
 
-The generator creates **synthetic records only**. Income categories are illustrative, not official classifications. No real citizen data is required.
+The **Student Enrollment** preset is a convenient starting example.
 
-### API example
+### API examples
 
 ```http
 GET /api/v1/data-factory/households?count=5&seed=42
+POST /api/v1/data-factory/custom/validate
+POST /api/v1/data-factory/custom/generate
+POST /api/v1/data-factory/custom/export?format=xlsx
+GET /api/v1/data-factory/templates
 ```
 
-Export the same configuration:
+See [Custom Dataset Builder documentation](docs/custom-dataset-builder.md) for request bodies and all endpoints.
 
-```http
-GET /api/v1/data-factory/households/export?count=5&seed=42&format=xlsx
-```
-
-Supported export formats: `csv`, `json`, `xlsx`.
-
-## Quality Checks
+## Verification
 
 ```powershell
-# Backend
-cd apps/api
-uv run python -m pytest
+# apps/api
+uv run python -m pytest -q
 
-# Frontend (in another terminal)
-cd apps/web
+# apps/web
 npx tsc --noEmit
 npm run lint
 npm run build
 ```
 
-The Mock Data Factory implementation guide reports **45 passing backend tests**, along with successful TypeScript, ESLint, production build, and browser checks at the time of its verification. These are historical results, **not a live CI status badge**.
+**127 backend tests passed** during the v0.2.0 implementation, along with TypeScript, ESLint, production build, both browser suites, and template persistence after API restart. These are historical results, not a live CI badge.
 
 ## Roadmap
 
-- [x] Next.js dashboard and navigation
-- [x] FastAPI backend and health endpoint
-- [x] Mock Data Factory — household preset
-- [x] Dataset preview and CSV / JSON / XLSX exports
-- [ ] Custom Dataset Builder and saved templates
+- [x] Dashboard and FastAPI backend
+- [x] Household data generator
+- [x] Custom Dataset Builder
+- [x] SQLite template library and JSON import/export
+- [x] CSV / JSON / Excel downloads
 - [ ] Database Schema Importer
 - [ ] API Testing Lab
 - [ ] Code Auditor
@@ -184,16 +142,19 @@ The Mock Data Factory implementation guide reports **45 passing backend tests**,
 
 ## Documentation
 
-- [Mock Data Factory — implementation and verification](docs/mock-data-factory.md)
-- [FastAPI application guide](apps/api/README.md)
+- [Custom Dataset Builder](docs/custom-dataset-builder.md)
+- [Mock Data Factory](docs/mock-data-factory.md)
+- [Backend Guide](apps/api/README.md)
 
-## Security
+## Security & Limits
 
-ALZA DevKit is designed as a **private internal development tool**, not a publicly exposed service. Do not commit secrets, environment files, real personal data, or generated datasets containing sensitive information. Add authentication, authorization, and deployment hardening before exposing it beyond a trusted local environment.
+ALZA DevKit is an **internal localhost-oriented MVP**, without authentication or authorization. Do not expose it publicly without hardening. Generate synthetic data only and do not commit secrets, real personal information, or local SQLite databases.
+
+Current limits: **1,000 rows**, **50 fields**, **three computed operations**, and local SQLite storage.
 
 ## License
 
-No license has been specified for this repository. All rights are reserved unless a license is added.
+No license is specified. All rights reserved unless a license is added.
 
 ---
 
@@ -201,6 +162,6 @@ No license has been specified for this repository. All rights are reserved unles
 
 <sub>ENGINEERED FOR BETTER DEVELOPMENT WORKFLOWS</sub>
 
-**ALZA DEVKIT** · Internal developer tooling
+**ALZA DEVKIT** · Build / Test / Ship
 
 </div>
