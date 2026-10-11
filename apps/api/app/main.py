@@ -30,5 +30,5 @@ def health_check():
         "status": "healthy",
         "application": "ALZA DevKit",
         "module": "Mock Data Factory",
-        "version": "0.1.0",
+        "version": app.version,
     }
