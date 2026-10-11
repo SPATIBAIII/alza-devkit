@@ -3,6 +3,7 @@
 
 import { useState } from "react";
 import { DataFactory } from "@/components/data-factory/data-factory";
+import { SchemaImporter } from "@/components/schema-import/schema-importer";
 import {
   Activity,
   ArrowRight,
@@ -26,7 +27,7 @@ const navigation = [
   { label: "Mock Data Factory", icon: FileSpreadsheet },
   { label: "Code Auditor", icon: ShieldCheck },
   { label: "API Testing Lab", icon: Braces },
-  { label: "Database Inspector", icon: Database },
+  { label: "Database Schema Importer", icon: Database },
   { label: "Monitoring", icon: Activity },
 ];
 
@@ -56,12 +57,12 @@ const modules = [
     available: false,
   },
   {
-    name: "Database Inspector",
+    name: "Database Schema Importer",
     description:
-      "Explore schemas, relationships, and database structure.",
+      "Import PostgreSQL definitions and generate related synthetic datasets.",
     icon: Database,
-    status: "Planned",
-    available: false,
+    status: "Available",
+    available: true,
   },
 ];
 
@@ -150,7 +151,7 @@ export default function Home() {
           <div className="mt-3 rounded-2xl bg-slate-100/80 p-3">
             <p className="text-sm font-semibold">Private Workspace</p>
             <p className="mt-1 text-xs text-slate-500">
-              ALZA DevKit v0.1.0
+              ALZA DevKit v0.3.0
             </p>
           </div>
         </div>
@@ -167,9 +168,6 @@ export default function Home() {
             </h2>
           </div>
           <div className="flex items-center gap-3">
-            <span className="hidden rounded-full border border-emerald-100 bg-emerald-50 px-3 py-1.5 text-xs font-medium text-emerald-700 sm:inline-flex">
-              Local Development
-            </span>
             <div
               className="flex h-10 w-10 items-center justify-center rounded-full border border-white bg-white/80 text-slate-500"
               aria-label="Notifications are not configured"
@@ -183,12 +181,9 @@ export default function Home() {
         {activePage === "Overview" ? (
           <div className="space-y-7">
             <section className="relative overflow-hidden rounded-[28px] bg-slate-900 p-7 text-white sm:p-10">
-              <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-blue-400/20 blur-3xl" />
+              <div className="absolute -right-16 -top-24 h-72 w-72 rounded-full bg-gray-400/20 blur-3xl" />
               <div className="relative max-w-xl">
-                <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3 py-1.5 text-xs">
-                  <Sparkles size={13} />
-                  Developer Operations Platform
-                </div>
+            
                 <h3 className="text-3xl font-semibold tracking-tight sm:text-4xl">
                   Build smarter.
                   <br />
@@ -209,8 +204,8 @@ export default function Home() {
 
             <section className="grid gap-4 sm:grid-cols-3">
               {[
-                { label: "Available Modules", value: "01", detail: "Ready to use" },
-                { label: "Planned Modules", value: "03", detail: "Coming later" },
+                { label: "Available Modules", value: "02", detail: "Ready to use" },
+                { label: "Planned Modules", value: "02", detail: "Coming later" },
                 { label: "Workspace", value: "Local", detail: "Private development" },
               ].map((stat) => (
                 <div
@@ -268,6 +263,8 @@ export default function Home() {
           </div>
         ) : activePage === "Mock Data Factory" ? (
           <DataFactory />
+        ) : activePage === "Database Schema Importer" ? (
+          <SchemaImporter />
         ) : (
           <section className="rounded-[28px] border border-white/80 bg-white/80 p-8 shadow-sm backdrop-blur-xl">
             <h3 className="text-xl font-semibold">{activePage}</h3>
@@ -279,7 +276,7 @@ export default function Home() {
 
         <footer className="mt-12 flex items-center justify-between border-t border-slate-200/70 pt-6 text-xs text-slate-400">
           <span>ALZA DevKit © 2026</span>
-          <span>Version 0.1.0</span>
+          <span>Version 0.3.0</span>
         </footer>
       </main>
     </div>

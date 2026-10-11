@@ -8,7 +8,7 @@ class CustomBodyLimit:
 
     async def __call__(self, scope, receive, send):
         path = scope.get("path", "")
-        if scope["type"] != "http" or not (path.startswith("/api/v1/data-factory/custom") or path.startswith("/api/v1/data-factory/templates")):
+        if scope["type"] != "http" or not (path.startswith("/api/v1/data-factory/custom") or path.startswith("/api/v1/data-factory/templates") or path.startswith("/api/v1/schema-import")):
             return await self.app(scope, receive, send)
         chunks, size = [], 0
         while True:
@@ -16,8 +16,9 @@ class CustomBodyLimit:
             if message["type"] == "http.disconnect":
                 return
             size += len(message.get("body", b""))
-            if size > 262144:
-                return await JSONResponse({"detail": "Request exceeds the 256 KB schema limit"}, status_code=413)(scope, receive, send)
+            limit = 2_000_000 if path.startswith("/api/v1/schema-import") else 262144
+            if size > limit:
+                return await JSONResponse({"detail": f"Request exceeds the {limit} byte limit"}, status_code=413)(scope, receive, send)
             chunks.append(message.get("body", b""))
             if not message.get("more_body", False):
                 break
